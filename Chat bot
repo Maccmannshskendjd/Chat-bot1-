@@ -1,0 +1,119 @@
+import time
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+
+# Dicionário com respostas personalizadas
+respostas = {
+    'saudacao': "Olá! Sou Caio Martins e vou te mostrar como mudar sua vida financeira! Qual é o seu nome? 😁",
+    'prazer': "Prazer, {nome}! Agora, antes de te mostrar como ganhar dinheiro online, me diz: você já tentou ganhar dinheiro pela internet antes? 💻",
+    'ajuda': "Estou aqui para ajudar você a alcançar os resultados que deseja. Me conta um pouco mais sobre você, como está a sua jornada no mercado digital? 🚀",
+    'dificuldade_inicio': "No começo é realmente difícil, mas depois que você aprende, é só lucro 🤑💵",
+    'desafios': "Quais desafios você tem enfrentado no mercado digital? Eu entendo como é complicado no início! 😕",
+    'estrategias': "Você já tentou alguma estratégia para alcançar seus resultados, mas sentiu que não estava funcionando? Eu passei por isso também, e posso te ajudar! 😃",
+    'dificuldade': "É assim mesmo, no começo é mais difícil 😅",
+    'tempo': "Quanto tempo já faz que você está tentando ganhar dinheiro online? ⏳",
+    'veterano': "Legal! Então você já é um veterano do mercado digital 🫡",
+    'dificuldade_jornada': "Você já enfrentou muitas dificuldades durante sua jornada? 😔",
+    'erro_metodologia': "Eu também enfrentei dificuldades no começo, sabia? Demorei muito até entender o que realmente dava resultado. Quando encontrei o caminho certo, minha renda cresceu! 💪",
+    'metodologia': "Eu passei 6 meses tentando fazer minha primeira venda no mercado digital. Sei bem como é frustrante, mas depois que descobri a metodologia certa, tudo mudou! ⚡",
+    'solucao': "Eu criei uma metodologia que pode ser a chave para o seu sucesso! Você vai aprender a evitar os mesmos erros que cometi e acelerar sua jornada para o sucesso. 🚀",
+    'aceleracao': "Com minha metodologia, você vai aprender tudo o que eu aprendi, mas de forma mais rápida. Vamos acelerar seu processo e fazer você alcançar suas primeiras vendas! ⏩",
+    'next_step': "Eu quero que você tenha o sucesso que eu tive, e mais rápido! A minha metodologia foi criada para te ajudar a alcançar seus sonhos. Que tal dar o próximo passo agora? 💼",
+    'começar_hoje': "Que tal começar hoje mesmo? 💵",
+    'confiança': "Não sou diferente de você. Passei por dificuldades, cometi erros, mas aprendi muito ao longo do caminho. Quero compartilhar isso com você para evitar que você passe pelos mesmos obstáculos. 👊",
+    'instagram': "Para você saber mais sobre mim, esse é o link do meu Instagram pessoal: https://www.instagram.com/caiomartins/profilecard/?igsh=bGcweWdhbDM3eXhi 📲",
+    'conta_comercial': "Aqui está uma das minhas contas comerciais caso queira tirar alguma dúvida. 💬",
+    'confiança_final': "Então, está mais confiante de que posso te ajudar a alcançar seus objetivos? ☺️",
+    'investimento': "Só mais uma pergunta: quanto você está disposto a investir no mercado digital? 💰",
+    'investimento_certo': "Investir no que é certo sempre é a melhor escolha. 💡",
+    'metodologia_link': "Aqui está o link da minha metodologia 👉👉👉 https://pay.kiwify.com.br/XhmT4CD?afid=xvaO5Afr 🔥",
+    'metodologia_exp': """Na minha metodologia, você vai encontrar:
+
+    - Um GRUPO NO TELEGRAM com suporte para tirar suas dúvidas. 👥
+    - Produtos como E-BOOKs para você vender no Kiwify de graça. 📚
+    - Vou te ensinar a CONVERTER SEUS LEADS. 🔄
+    - Como ganhar dinheiro com TRÁFEGO ORGÂNICO 🌱
+    - E muito mais! Está esperando o que para ser o próximo milionário? 🤑🫵""",
+    'garantir_vaga': "Então, vai lá nesse link e garanta sua vaga: https://pay.kiwify.com.br/XhmT4CD?afid=xvaO5Afr. Lembrando que resta apenas 20 vagas e a promoção vai até meia-noite! 🕛",
+    'dicas_gratis': "Caso você queira receber dicas de graça e ficar por dentro do mercado digital, clique nesse link 👉👉 https://dtc1rver.forms.app/formulario-de-captura-de-e-mail-e-contato 📧"
+}
+
+# Funções para o bot
+
+def saudacao(update: Update, context: CallbackContext):
+    update.message.reply_text(respostas['saudacao'])
+    return 'nome'
+
+def capturar_nome(update: Update, context: CallbackContext):
+    nome = update.message.text.strip().capitalize()
+    context.user_data['nome'] = nome
+    update.message.reply_text(f"Prazer, {nome}! Agora, antes de te mostrar como ganhar dinheiro online, me diz: você já tentou ganhar dinheiro pela internet antes? 💻")
+    return 'tentativa'
+
+def tentativa(update: Update, context: CallbackContext):
+    tentativa = update.message.text.lower()
+    if tentativa == 'sim' or tentativa == 'não':
+        update.message.reply_text(respostas['ajuda'])
+    else:
+        update.message.reply_text("Desculpe, não entendi. Vamos continuar com o nosso bate-papo! 😊")
+    return 'jornada'
+
+def coletar_jornada(update: Update, context: CallbackContext):
+    nome = context.user_data['nome']
+    update.message.reply_text(respostas['dificuldade_inicio'])
+    return 'desafio'
+
+def desafios(update: Update, context: CallbackContext):
+    nome = context.user_data['nome']
+    update.message.reply_text(f"Quais desafios você tem enfrentado no mercado digital, {nome}? Eu entendo bem como é complicado no início! 😕")
+    return 'analise_dificuldade'
+
+def analise_dificuldade(update: Update, context: CallbackContext):
+    desafio = update.message.text.lower()
+    nome = context.user_data['nome']
+    if "difícil" in desafio:
+        update.message.reply_text(f"É difícil {nome}, mas com essa metodologia isso tudo pode mudar agora. 💪")
+    else:
+        update.message.reply_text(f"Você já tentou alguma estratégia para alcançar seus resultados, mas sentiu que não estava funcionando? Eu passei por isso também, e posso te ajudar! 😃")
+    return 'tempo'
+
+def tempo_de_mercado(update: Update, context: CallbackContext):
+    update.message.reply_text(respostas['tempo'])
+    return 'investimento'
+
+def investimento(update: Update, context: CallbackContext):
+    update.message.reply_text(respostas['investimento'])
+    return 'final'
+
+def finalizar(update: Update, context: CallbackContext):
+    update.message.reply_text(respostas['metodologia_link'])
+    return ConversationHandler.END
+
+def main():
+    token = '8033504974:AAHyO8T98NvQp0p5f51IkJxqDmEJMhvt4Xk'
+
+    updater = Updater(token, use_context=True)
+    dispatcher = updater.dispatcher
+
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', saudacao)],
+        states={
+            'nome': [MessageHandler(Filters.text & ~Filters.command, capturar_nome)],
+            'tentativa': [MessageHandler(Filters.text & ~Filters.command, tentativa)],
+            'jornada': [MessageHandler(Filters.text & ~Filters.command, coletar_jornada)],
+            'desafio': [MessageHandler(Filters.text & ~Filters.command, desafios)],
+            'analise_dificuldade': [MessageHandler(Filters.text & ~Filters.command, analise_dificuldade)],
+            'tempo': [MessageHandler(Filters.text & ~Filters.command, tempo_de_mercado)],
+            'investimento': [MessageHandler(Filters.text & ~Filters.command, investimento)],
+            'final': [MessageHandler(Filters.text & ~Filters.command, finalizar)],
+        },
+        fallbacks=[],
+    )
+
+    dispatcher.add_handler(conv_handler)
+
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
